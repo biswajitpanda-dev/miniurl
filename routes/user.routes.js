@@ -1,45 +1,52 @@
-import express from 'express'
-import { db } from '../db/index'
-import { userTable } from '../models/index'
-import { eq } from 'drizzle-orm'
-import { randomBytes, createHmac } from 'node:crypto'
+import express from 'express';
+import { db } from '../db/index.js';
+import { userTable } from '../models/index.js';
+import { eq } from 'drizzle-orm';
+import { randomBytes, createHmac } from 'node:crypto';
+import signupRequestBodySchema from '../validation/request.validation.js';
 
-const router = express.Router()
+const router = express.Router();
 
-router.post('/signup', async (req, res)=>{
-    const { firstName, lastName, email, password } = req.body;
+router.post('/signup', async (req, res) => {
+  const validationResult = signupRequestBodySchema.safeParse(req.body);
 
-    if (!firstName || !email || !password) {
-      return res.status(400).json({ error: 'Required fields missing' });
-    }
+  if (!validationResult.success) {
+    return res.status(400).json({
+      error: validationResult.error.flatten(),
+    });
+  }
 
-    const [existingUser] = await db
-      .select({ id: userTable.id })
-      .from(userTable)
-      .where(eq(userTable.email, email));
+  const { firstName, lastName, email, password } = validationResult.data;
+  const normalizedEmail = email.toLowerCase();
 
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
+  const [existingUser] = await db
+    .select({ id: userTable.id })
+    .from(userTable)
+    .where(eq(userTable.email, normalizedEmail));
 
-    const salt = randomBytes(64).toString('hex');
-    const hashedPassword = createHmac('sha256', salt)
-      .update(password)
-      .digest('hex');
+  if (existingUser) {
+    return res.status(400).json({ error: 'Email already exists' });
+  }
 
-    const [user] = await db
-      .insert(userTable)
-      .values({
-        email,
-        firstName,
-        lastName,
-        salt,
-        password: hashedPassword,
-      })
-      .returning({ id: userTable.id });
+  const salt = randomBytes(64).toString('hex');
+  const hashedPassword = createHmac('sha256', salt)
+    .update(password)
+    .digest('hex');
 
-    return res.status(201).json({ data: { userId: user.id } });
+  const [user] = await db
+    .insert(userTable)
+    .values({
+      email: normalizedEmail,
+      firstName,
+      lastName,
+      salt,
+      password: hashedPassword,
+    })
+    .returning({ id: userTable.id });
 
-})
+  return res.status(201).json({
+    data: { userId: user.id },
+  });
+});
 
-export default router
+export default router;

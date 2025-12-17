@@ -1,15 +1,17 @@
-import express from 'express'
+import express from 'express';
+import userRouter from './routes/user.routes.js';
 
-const app = express()
+const app = express();
+const PORT = process.env.PORT ?? 8000;
 
-const PORT = process.env.PORT ?? 8000
+app.use(express.json());
 
-app.use(express.json)
+app.use('/user', userRouter);
 
-app.get('/', (req, res) =>{
-    return res.json({message: "home"});
-})
+app.get('/', (req, res) => {
+  return res.json({ message: 'home' });
+});
 
-app.listen(PORT, () =>{
-    console.log("app is running on port: 8000")
-})
+app.listen(PORT, () => {
+  console.log(`app is running on port: ${PORT}`);
+});

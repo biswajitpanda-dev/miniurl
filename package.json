@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch index",
-    "db:push" : "npx drizzle-kit push",
-    "db:studio" : "npx drizzle-kit studio"
-
+    "db:push": "npx drizzle-kit push",
+    "db:studio": "npx drizzle-kit studio"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +23,7 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "express": "~4.22.1",
-    "postgres": "^3.4.7"
+    "postgres": "^3.4.7",
+    "zod": "^4.2.1"
   }
 }
