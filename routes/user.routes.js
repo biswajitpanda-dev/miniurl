@@ -5,7 +5,7 @@ import {
 } from '../validation/request.validation.js';
 import { hashPasswordWithSalt } from '../utils/hash.js';
 import { getUserByEmail, createUser } from '../services/user.services.js';
-import jwt from 'jsonwebtoken';
+import { createUserToken } from '../validation/token.validation.js';
 
 const router = express.Router();
 
@@ -53,7 +53,6 @@ router.post('/login', async (req, res) => {
   const { email, password } = validationResult.data;
 
   const user = await getUserByEmail(email);
-
   if (!user) {
     return res.status(404).json({ error: 'User does not exist' });
   }
@@ -65,15 +64,7 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Incorrect password' });
   }
 
-  if (!process.env.JWT_SECRET) {
-    return res.status(500).json({ error: 'JWT secret not configured' });
-  }
-
-  const token = jwt.sign(
-    { id: user.id },
-    process.env.JWT_SECRET,
-    { expiresIn: '7d' }
-  );
+  const token = await createUserToken({ id: user.id });
 
   return res.json({ token });
 });
