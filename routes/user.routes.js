@@ -5,7 +5,7 @@ import {
 } from '../validation/request.validation.js';
 import { hashPasswordWithSalt } from '../utils/hash.js';
 import { getUserByEmail, createUser } from '../services/user.services.js';
-import { createUserToken } from '../validation/token.validation.js';
+import { createUserToken } from '../utils/token.js';
 
 const router = express.Router();
 

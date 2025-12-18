@@ -1,37 +1,6 @@
-# ======================
 # Dependencies
-# ======================
 node_modules/
 
-# ======================
 # Environment variables
-# ======================
 .env
-.env.*
 
-
-# ======================
-# Logs
-# ======================
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-*.log
-
-# ======================
-# Runtime / temp
-# ======================
-.tmp/
-
-# ======================
-# Build output (future)
-# ======================
-dist/
-build/
-
-# ======================
-# OS / Editor
-# ======================
-.DS_Store
-Thumbs.db
-.vscode/
