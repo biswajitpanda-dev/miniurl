@@ -11,6 +11,8 @@ export async function getUserByEmail(email) {
       firstName: userTable.firstName,
       lastName: userTable.lastName,
       email: userTable.email,
+      salt: userTable.salt,
+      password: userTable.password
     })
     .from(userTable)
     .where(eq(userTable.email, normalizedEmail));
